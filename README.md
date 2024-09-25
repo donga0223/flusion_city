@@ -38,10 +38,15 @@ conda env create -f environment.yml
 4. Once the environment is set up, activate it and run the test:
 
 ```
+idev -N 1 -n 1 -t 02:00:00 -p development -A A-ib1
 conda activate flusion
-python code/gbq_city/gbq.py --test_run
+python code/gbq_city/gbq_all.py --test_run
 ```
 
 The `--test_run` option will perform a very short test run for two reference dates and three different source settings. Without `--test_run`, you will submit all cases, which will result in around 100 jobs. So, please run the test first before submitting everything.
 
+5. To fit a single reference date and a single source condition, run a command like: `python code/gbq_city/gbq.py --ref_date '2023-09-30 --model_name gbq_qr` 
+
+Alternatively, to submit all jobs, run: `python code/gbq_city/gbq_all.py`
+The script `code/gbq_city/gbq_all.py` generates `.sh` files for job submission and submits them.
 
