@@ -38,7 +38,7 @@ conda env create -f environment.yml
 4. Once the environment is set up, activate it and run the test:
 
 ```
-idev -N 1 -n 1 -t 02:00:00 -p development -A A-ib1
+idev -N 1 -n 1 -t 02:00:00 -p development -A A-ib1  ## getting on a development node first
 conda activate flusion
 python code/gbq_city/gbq_all.py --test_run
 ```
