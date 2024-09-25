@@ -51,7 +51,7 @@ def submit_jobs(test_run):
                         f'#SBATCH --nodes=1 # Requested number of nodes\n' \
                         f'#SBATCH --output="{logdir}/{ref_date}_{model_name}.out" \n' \
                         f'#SBATCH --error="{logdir}/{ref_date}_{model_name}.err" \n' \
-                        f'#SBATCH --partition small # Partition\n' \
+                        f'#SBATCH --partition normal # Partition\n' \
                         f'#SBATCH --time 2:00:00 # Job time limit\n' + cmd
             
             shfile = pathlib.Path(shdir) / f'{ref_date}_{model_name}.sh'
