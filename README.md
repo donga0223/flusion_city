@@ -12,7 +12,6 @@ This is a modified version of the Flusion model (https://github.com/reichlab/flu
 ## Environment setup
 I ran everything on the TACC cluster (UT Austin cluster) and needed to install Miniconda in your directory.
 
-### How to Install Miniconda
 1. Download and install Miniconda:
 
 ```
