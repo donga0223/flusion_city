@@ -43,10 +43,10 @@ conda activate flusion
 python code/gbq_city/gbq_all.py --test_run
 ```
 
-The `--test_run` option will perform a very short test run for two reference dates and three different source settings. Without `--test_run`, you will submit all cases, which will result in around 100 jobs. So, please run the test first before submitting everything.
+- The `--test_run` option will perform a very short test run for two reference dates and three different source settings. Without `--test_run`, you will submit all cases, which will result in around 100 jobs. So, please run the test first before submitting everything.
 
-To fit a single reference date and a single source condition, run a command like: `python code/gbq_city/gbq.py --ref_date '2023-09-30 --model_name gbq_qr` 
+- To fit a single reference date and a single source condition, run a command like: `python code/gbq_city/gbq.py --ref_date '2023-09-30 --model_name gbq_qr` 
 
-Alternatively, to submit all jobs, run: `python code/gbq_city/gbq_all.py`
+- Alternatively, to submit all jobs, run: `python code/gbq_city/gbq_all.py`
 The script `code/gbq_city/gbq_all.py` generates `.sh` files for job submission and submits them.
 
