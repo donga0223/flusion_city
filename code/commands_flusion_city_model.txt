@@ -1,0 +1,6 @@
+conda activate flusion python gbq.py --ref_date 2023-09-30 --model_name gbq_qr --short_run True
+conda activate flusion python gbq.py --ref_date 2023-09-30 --model_name gbq_qr_nhsn_only --short_run True
+conda activate flusion python gbq.py --ref_date 2023-09-30 --model_name gbq_qr_nhsn_city_only --short_run True
+conda activate flusion python gbq.py --ref_date 2023-10-07 --model_name gbq_qr --short_run True
+conda activate flusion python gbq.py --ref_date 2023-10-07 --model_name gbq_qr_nhsn_only --short_run True
+conda activate flusion python gbq.py --ref_date 2023-10-07 --model_name gbq_qr_nhsn_city_only --short_run True
