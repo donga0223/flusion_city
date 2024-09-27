@@ -7,9 +7,9 @@ import datetime
 # c("2023-10-01", "2023-11-19", "2024-01-07", "2024-02-18", "2024-03-24")
 
 def submit_jobs(test_run):
-    shdir = 'output/arhdfa_sh'
+    shdir = 'output/flusion_sh'
     pathlib.Path(shdir).mkdir(parents=True, exist_ok=True)
-    logdir = 'output/arhdfa_logs'
+    logdir = 'output/flusion_logs'
 
     if test_run:
         start_date = datetime.date(2023, 9, 30)
@@ -39,27 +39,35 @@ def submit_jobs(test_run):
         short_run = 'False'
 
     for model_name in model_names:
+        cmds = "source ~/.bashrc\n" \
+       "conda activate flusion\n"
+        
         for ref_date in ref_dates:
-            cmd = f'conda activate flusion' \
-                f'python gbq.py --ref_date {ref_date} --model_name {model_name} --short_run {short_run}'
-            print(f"Launching {ref_date}_{model_name}")
+            cmd = f'python code/gbq_city/gbq.py --ref_date {ref_date} --model_name {model_name} --short_run {short_run} & \n'
+            cmds += cmd
+
+        # Add wait command to ensure all background tasks are completed before job finishes
+        cmds += "wait\n"
+        print(f"Launching {model_name}")
             
-            sh_contents = f'#!/bin/bash\n' \
-                        f'#SBATCH --job-name="{ref_date}_{model_name}"\n' \
-                        f'#SBATCH --ntasks=1 \n' \
-                        f'#SBATCH -c 1 # Number of Cores per Task\n' \
-                        f'#SBATCH --nodes=1 # Requested number of nodes\n' \
-                        f'#SBATCH --output="{logdir}/{ref_date}_{model_name}.out" \n' \
-                        f'#SBATCH --error="{logdir}/{ref_date}_{model_name}.err" \n' \
-                        f'#SBATCH --partition normal # Partition\n' \
-                        f'#SBATCH --time 2:00:00 # Job time limit\n' + cmd
-            
-            shfile = pathlib.Path(shdir) / f'{ref_date}_{model_name}.sh'
-            with open(shfile, 'w') as f:
-                f.write(sh_contents)
-            
-            os.system(f'sbatch {shfile}')
-            
+        sh_contents = f'#!/bin/bash\n' \
+                    f'#SBATCH --job-name="{model_name}"\n' \
+                    f'#SBATCH --ntasks=1 \n' \
+                    f'#SBATCH -c 28 # Number of Cores per Task\n' \
+                    f'#SBATCH --nodes=2 # Requested number of nodes\n' \
+                    f'#SBATCH --output="{logdir}/{model_name}.out" \n' \
+                    f'#SBATCH --error="{logdir}/{model_name}.err" \n' \
+                    f'#SBATCH --partition small # partition\n' \
+                    f'#SBATCH -A  A-ib1       # Allocation name\n' \
+                    f'#SBATCH --mail-user=dongah.kim@austin.utexas.edu  # Email for notifications\n' \
+                    f'#SBATCH --time 4:00:00 # Job time limit\n' + cmds
+        
+        shfile = pathlib.Path(shdir) / f'{model_name}.sh'
+        with open(shfile, 'w') as f:
+            f.write(sh_contents)
+        
+        os.system(f'sbatch {shfile}')
+        
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run estimation for simulation study, multiple combinations of sample size, theta, condition, and replicate index')
