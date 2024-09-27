@@ -56,8 +56,11 @@ if __name__ == "__main__":
                         choices=['gbq_qr', 'gbq_qr_nhsn_only', 'gbq_qr_nhsn_city_only'],
                         default='gbq_qr')
     parser.add_argument('--short_run',
+    #                   help='Flag to do a short run; overrides model-default num_bags to 10 and uses 3 quantile levels',
+    #                   choices=['True', 'False'],
+    #                   default='False')
                         action=argparse.BooleanOptionalAction,
-			help='Flag to do a short run; overrides model-default num_bags to 10 and uses 3 quantile levels')
+                        help='Flag to do a short run; overrides model-default num_bags to 10 and uses 3 quantile levels')
     parser.set_defaults(short_run=False)
     args = parser.parse_args()
     

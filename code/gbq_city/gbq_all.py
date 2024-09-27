@@ -22,7 +22,7 @@ def submit_jobs(test_run):
             ref_dates.append(current_date)  # Append the current Saturday to the list
             current_date += datetime.timedelta(days=7)  # Move to the next Saturday
         model_names=['gbq_qr', 'gbq_qr_nhsn_only', 'gbq_qr_nhsn_city_only']
-        short_run = 'True'
+
     else :
         # Start and end dates
         start_date = datetime.date(2023, 9, 30)
@@ -36,15 +36,18 @@ def submit_jobs(test_run):
             current_date += datetime.timedelta(days=7)  # Move to the next Saturday
 
         model_names=['gbq_qr', 'gbq_qr_nhsn_only', 'gbq_qr_nhsn_city_only']
-        short_run = 'False'
 
     for model_name in model_names:
         cmds = "source ~/.bashrc\n" \
        "conda activate flusion\n"
         
         for ref_date in ref_dates:
-            cmd = f'python code/gbq_city/gbq.py --ref_date {ref_date} --model_name {model_name} --short_run {short_run} & \n'
-            cmds += cmd
+            if test_run:
+                cmd = f'python code/gbq_city/gbq.py --ref_date {ref_date} --model_name {model_name} --short_run & \n'
+                cmds += cmd
+            else:
+                cmd = f'python code/gbq_city/gbq.py --ref_date {ref_date} --model_name {model_name} & \n'
+                cmds += cmd
 
         # Add wait command to ensure all background tasks are completed before job finishes
         cmds += "wait\n"
@@ -60,6 +63,7 @@ def submit_jobs(test_run):
                     f'#SBATCH --partition small # partition\n' \
                     f'#SBATCH -A  A-ib1       # Allocation name\n' \
                     f'#SBATCH --mail-user=dongah.kim@austin.utexas.edu  # Email for notifications\n' \
+                    f'#SBATCH --mail-type=all  # Type of notifications, begin, end, fail, all\n' \
                     f'#SBATCH --time 4:00:00 # Job time limit\n' + cmds
         
         shfile = pathlib.Path(shdir) / f'{model_name}.sh'
