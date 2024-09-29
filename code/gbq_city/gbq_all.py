@@ -14,25 +14,25 @@ def submit_jobs(test_run):
     if test_run:
         start_date = datetime.date(2023, 9, 30)
         end_date = datetime.date(2023, 10, 7)
-        ref_dates = []
+        forecast_dates = []
 
         # Generate dates by incrementing 7 days at a time
         current_date = start_date
         while current_date <= end_date:
-            ref_dates.append(current_date)  # Append the current Saturday to the list
+            forecast_dates.append(current_date)  # Append the current Saturday to the list
             current_date += datetime.timedelta(days=7)  # Move to the next Saturday
         model_names=['gbq_qr', 'gbq_qr_nhsn_only', 'gbq_qr_nhsn_city_only']
 
     else :
         # Start and end dates
         start_date = datetime.date(2023, 9, 30)
-        end_date = datetime.date(2024, 3, 30)
-        ref_dates = []
+        end_date = datetime.date(2023, 10, 7)
+        forecast_dates = []
 
         # Generate dates by incrementing 7 days at a time
         current_date = start_date
         while current_date <= end_date:
-            ref_dates.append(current_date)  # Append the current Saturday to the list
+            forecast_dates.append(current_date)  # Append the current Saturday to the list
             current_date += datetime.timedelta(days=7)  # Move to the next Saturday
 
         model_names=['gbq_qr', 'gbq_qr_nhsn_only', 'gbq_qr_nhsn_city_only']
@@ -41,12 +41,12 @@ def submit_jobs(test_run):
         cmds = "source ~/.bashrc\n" \
        "conda activate flusion\n"
         
-        for ref_date in ref_dates:
+        for forecast_date in forecast_dates:
             if test_run:
-                cmd = f'python code/gbq_city/gbq.py --ref_date {ref_date} --model_name {model_name} --short_run & \n'
+                cmd = f'python code/gbq_city/gbq.py --forecast_date {forecast_date} --model_name {model_name} --short_run & \n'
                 cmds += cmd
             else:
-                cmd = f'python code/gbq_city/gbq.py --ref_date {ref_date} --model_name {model_name} & \n'
+                cmd = f'python code/gbq_city/gbq.py --forecast_date {forecast_date} --model_name {model_name} & \n'
                 cmds += cmd
 
         # Add wait command to ensure all background tasks are completed before job finishes
@@ -64,7 +64,7 @@ def submit_jobs(test_run):
                     f'#SBATCH -A  A-ib1       # Allocation name\n' \
                     f'#SBATCH --mail-user=dongah.kim@austin.utexas.edu  # Email for notifications\n' \
                     f'#SBATCH --mail-type=all  # Type of notifications, begin, end, fail, all\n' \
-                    f'#SBATCH --time 4:00:00 # Job time limit\n' + cmds
+                    f'#SBATCH --time 48:00:00 # Job time limit\n' + cmds
         
         shfile = pathlib.Path(shdir) / f'{model_name}.sh'
         with open(shfile, 'w') as f:
