@@ -12,61 +12,61 @@ def submit_jobs(test_run):
     logdir = 'output/flusion_logs'
 
     if test_run:
-        start_date = datetime.date(2023, 9, 30)
+        start_date = datetime.date(2023, 9, 27)
         end_date = datetime.date(2023, 10, 7)
-        ref_dates = []
+        forecast_dates = []
 
         # Generate dates by incrementing 7 days at a time
         current_date = start_date
         while current_date <= end_date:
-            ref_dates.append(current_date)  # Append the current Saturday to the list
+            forecast_dates.append(current_date)  # Append the current Saturday to the list
             current_date += datetime.timedelta(days=7)  # Move to the next Saturday
         model_names=['gbq_qr', 'gbq_qr_nhsn_only', 'gbq_qr_nhsn_city_only']
 
     else :
         # Start and end dates
-        start_date = datetime.date(2023, 9, 30)
+        start_date = datetime.date(2023, 9, 27)
         end_date = datetime.date(2024, 3, 30)
-        ref_dates = []
+        forecast_dates = []
 
         # Generate dates by incrementing 7 days at a time
         current_date = start_date
         while current_date <= end_date:
-            ref_dates.append(current_date)  # Append the current Saturday to the list
+            forecast_dates.append(current_date)  # Append the current Saturday to the list
             current_date += datetime.timedelta(days=7)  # Move to the next Saturday
 
         model_names=['gbq_qr', 'gbq_qr_nhsn_only', 'gbq_qr_nhsn_city_only']
 
 
     for model_name in model_names:
-        for ref_date in ref_dates:
+        for forecast_date in forecast_dates:
             if test_run:
                 cmd ="source ~/.bashrc\n" \
                     "conda activate flusion\n" \
-                    f'python code/gbq_city/gbq.py --ref_date {ref_date} --model_name {model_name} --short_run'
+                    f'python code/gbq_city/gbq.py --forecast_date {forecast_date} --model_name {model_name} --short_run'
             else:
                 cmd = "source ~/.bashrc\n" \
                     "conda activate flusion\n" \
-                    f'python code/gbq_city/gbq.py --ref_date {ref_date} --model_name {model_name}'
-            print(f"Launching {ref_date}_{model_name}")
+                    f'python code/gbq_city/gbq.py --forecast_date {forecast_date} --model_name {model_name}'
+            print(f"Launching {forecast_date}_{model_name}")
 
             #cmd = f'source ~/.bashrc' \
             #    f'conda activate flusion' \
             #    f'python gbq.py --ref_date {ref_date} model_name {model_name}'
-            print(f"Launching {ref_date}_{model_name}")
+            print(f"Launching {forecast_date}_{model_name}")
 
             sh_contents = f'#!/bin/bash\n' \
-                        f'#SBATCH --job-name="{ref_date}_{model_name}"\n' \
+                        f'#SBATCH --job-name="{forecast_date}_{model_name}"\n' \
                         f'#SBATCH --ntasks=1 \n' \
                         f'#SBATCH -c 1 # Number of Cores per Task\n' \
                         f'#SBATCH --nodes=1 # Requested number of nodes\n' \
-                        f'#SBATCH --output="{logdir}/{ref_date}_{model_name}.out" \n' \
-                        f'#SBATCH --error="{logdir}/{ref_date}_{model_name}.err" \n' \
+                        f'#SBATCH --output="{logdir}/{forecast_date}_{model_name}.out" \n' \
+                        f'#SBATCH --error="{logdir}/{forecast_date}_{model_name}.err" \n' \
                         f'#SBATCH --partition small # Partition\n' \
                         f'#SBATCH -A  A-ib1       # Allocation name\n' \
                         f'#SBATCH --time 2:00:00 # Job time limit\n' + cmd
             
-            shfile = pathlib.Path(shdir) / f'{ref_date}_{model_name}.sh'
+            shfile = pathlib.Path(shdir) / f'{forecast_date}_{model_name}.sh'
             with open(shfile, 'w') as f:
                 f.write(sh_contents)
             

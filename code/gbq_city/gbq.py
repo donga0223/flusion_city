@@ -25,8 +25,8 @@ import run
 # c("2023-10-01", "2023-11-19", "2024-01-07", "2024-02-18", "2024-03-24")
 
 
-def run_model(ref_date, model_name, short_run):
-
+def run_model(forecast_date, model_name, short_run):
+    ref_date = forecast_date - datetime.timedelta((forecast_date.weekday() + 2) % 7 - 7)
     model_config, run_config = utils2.create_configs(
         ref_date=ref_date,
         model_name=model_name,
@@ -47,10 +47,10 @@ def run_model(ref_date, model_name, short_run):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run gradient boosting model for flu prediction')
-    parser.add_argument('--ref_date',
-                        help='reference date for predictions in format YYYY-MM-DD; a Saturday',
+    parser.add_argument('--forecast_date',
+                        help='finding the reference date for predictions in format YYYY-MM-DD; a Saturday',
                         type=lambda s: datetime.date.fromisoformat(s),
-                        default='2023-09-30')
+                        default='2023-09-27')
     parser.add_argument('--model_name',
                         help='Model name',
                         choices=['gbq_qr', 'gbq_qr_nhsn_only', 'gbq_qr_nhsn_city_only'],

@@ -37,7 +37,7 @@ def run_gbq_flu_model(model_config, run_config, target_statecity):
     
     df['wk_end_date'] = pd.to_datetime(df['wk_end_date'])
     #forecast_date = datetime.date(2023, 9, 30)
-    forecast_date = pd.to_datetime(run_config.ref_date)
+    forecast_date = pd.to_datetime(run_config.ref_date)-pd.Timedelta(days=4)
 
     # Filter the DataFrame based on the comparison
     df = df[df['wk_end_date'] <= forecast_date]
